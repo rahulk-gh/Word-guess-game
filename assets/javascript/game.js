@@ -3,82 +3,27 @@ var alpha =["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n"
 var wordC2 =""; //lower case and no space version of wordchoice[answerI]
 var alreadyGuessed =[];//all characters guessed incorrectly
 var numberOfGuess = 12;//total number of allowed guesses
-var correctanswer = false;// has player arrived at right answer?
+var won = false;// has player arrived at right answer?
 var answer ="";// the answer to this rounds hangman
 var answerI=0;//iterator to choose this round's hangman
 var positions =[];//indexes of the correct guesses for a particular guess
 var correctGuess=0; //number of right guessed words
 var underscores=[];
+var potato = "";
+var carrot ="";
+var userkey ="";
 
 
-var userChoice =("w");//testing only
+var wins =0;
+// var userChoice =("w");//testing only
 
-
-
-//try to create this using the different version of forEach as below
-// wordChoices.forEach(element => {
-//     element.toLowerCase();
-// });
-
-
-
-
-
-// detecting user entry..works
-document.onkeyup = function(event) {
-    var userkey = event.key;
-    if (isPres(userkey, alpha)) {
-        numberOfGuess--; 
-        if (isPres(userkey, wordC2)){
-            //find index of the word 
-            for(var i =0; i<wordC2.length; i++){
-                if (wordC2[i] == userkey) {
-                    position.push(i);
-                }
-            }
-            //replace correct dash with that word
-            for (var j = 0;j<position.length;j++){
-                underscores[position[j]] = userkey;
-            } 
-
-        }
-        else if (isPres(userkey,alreadyGuessed)==false){
-            alreadyGuessed.push(userkey);
-        }
-        
-    }
-
-
-    // if (isPres(userkey, wordChoices[1])){
-    // alert("works");
-    // }
-    // else{
-    //     alert("nope")
-    // } 
-
-
-}
-
-//finding the characters in array - this works, needs case modification
-// var j = 3;
-// isPresent = false;
-// for(var i =0; i<wordChoices[j].length; i++){
-//     if (wordChoices[j][i] == userChoice) {
-//         isPresent = true;
-//     }
-// }
-
-// console.log(isPresent);
-// console.log(wordChoices);
-// console.log(wordC2);
 
 //tested this - Final
 function isPres(userX,arrayY) {
-    isPresBool =false;
+    var isPresBool =false;
     for(var i =0; i<arrayY.length; i++){
         if (arrayY[i]==userX){
             isPresBool= true;
-            break;
         }
     }
     return isPresBool
@@ -93,13 +38,21 @@ function resetVar() {
     wordC2 ="";
     alreadyGuessed =[];
     numberOfGuess = 12;
-    correctGuess = false;
     answer ="";
     correctanswer = false;// has player arrived at right answer?
-    answerI=0;//iterator to choose this round's hangman
+    answerI =Math.floor(Math.random() * wordChoices.length);//iterator to choose this round's hangman
     positions =[];//indexes of the correct guesses for a particular guess
     correctGuess=0; //number of right guessed words
     underscores=[];
+    potato = underscores.toString();
+    carrot = alreadyGuessed.toString();
+
+    html =
+    "<p>You chose: " + userkey + "</p>" +
+    "<p>Number of guesses left: " + numberOfGuess + "</p>" +
+    "<p>wins: " + wins + "</p>" + 
+    "<p>underscores- " + potato + "</p>" +
+    "<p> already guessed: " + carrot + "</p>";
 
 }
 
@@ -122,10 +75,82 @@ function intialize(){
 
 
 
-// for (var i =0; i < wordChoices.length; i++){
-//     // wordC2[i] = wordChoices[i].toLowerCase().replace(' ', '');
-//     wordC2 = wordChoices[i].toLowerCase();
+
+//try to create this using the different version of forEach as below
+// wordChoices.forEach(element => {
+//     element.toLowerCase();
+// });
+
+
+
+
+
+// detecting user entry..works
+document.onkeyup = function(event) {
+
+    userkey = event.key;
+    if ((userkey == " ")&&(won == true)){
+        resetVar();
+        intialize();
+
+    }
+    else if (isPres(userkey, alpha) && (won ==false)) {
+        numberOfGuess--; 
+        if (isPres(userkey, wordC2) && (isPres(userkey, underscores)==false)){
+            //find index of the word 
+            for(var i =0; i<wordC2.length; i++){
+                if (wordC2[i] == userkey) {
+                    positions.push(i);
+                }
+            }
+            //replace correct dash with that word
+            for (var j = 0;j<positions.length;j++){
+                underscores[positions[j]] = userkey;
+                correctGuess++;
+            } 
+
+        }
+        else if (isPres(userkey,alreadyGuessed)==false){
+            alreadyGuessed.push(userkey);
+        }
+        else if(correctGuess == wordC2.length){
+            won = true;
+            alert("You win! Play again -press space");
+        }
+
+        potato = underscores.toString();
+        carrot = alreadyGuessed.toString();
+        console.log(potato);
+        console.log(carrot);
+    }
+
+    var html =
+    "<p>You chose: " + userkey + "</p>" +
+    "<p>Number of guesses left: " + numberOfGuess + "</p>" +
+    "<p>wins: " + wins + "</p>" +
+    "<p>" + potato + "</p>" +
+    "<p> already guessed: " + carrot + "</p>";
+
+    document.querySelector("#game").innerHTML = html;
+    // document.getElementById("#game").innerHTML = html;
+
+}
+
+//finding the characters in array - this works, needs case modification
+// var j = 3;
+// isPresent = false;
+// for(var i =0; i<wordChoices[j].length; i++){
+//     if (wordChoices[j][i] == userChoice) {
+//         isPresent = true;
+//     }
 // }
+
+// console.log(isPresent);
+// console.log(wordChoices);
+// console.log(wordC2);
+
+
+
 
 //display on page as guess is made
 //display a snippet of information - hint
